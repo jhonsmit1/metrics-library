@@ -58,7 +58,17 @@ export class CustomMetricsService implements OnModuleInit {
     durationSeconds: number,
     dbName?: string
   ): void {
-    if (!this.enabled || !this.dbQueryDurationSeconds) return;
+    if (!this.enabled || !this.dbQueryDurationSeconds) {
+      console.log("Metric NOT recorded - disabled or histogram not initialized");
+      return;
+    }
+
+    console.log("Recording metric:", {
+      dbSystem,
+      operation,
+      durationSeconds,
+      dbName,
+    });
 
     this.dbQueryDurationSeconds.record(durationSeconds, {
       "db.system": dbSystem,

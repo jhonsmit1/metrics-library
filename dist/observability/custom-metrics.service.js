@@ -47,8 +47,16 @@ let CustomMetricsService = CustomMetricsService_1 = class CustomMetricsService {
         });
     }
     recordDbQuery(dbSystem, operation, durationSeconds, dbName) {
-        if (!this.enabled || !this.dbQueryDurationSeconds)
+        if (!this.enabled || !this.dbQueryDurationSeconds) {
+            console.log("Metric NOT recorded - disabled or histogram not initialized");
             return;
+        }
+        console.log("Recording metric:", {
+            dbSystem,
+            operation,
+            durationSeconds,
+            dbName,
+        });
         this.dbQueryDurationSeconds.record(durationSeconds, {
             "db.system": dbSystem,
             "db.operation": operation,
