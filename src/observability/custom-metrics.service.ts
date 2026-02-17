@@ -1,5 +1,13 @@
-import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
+import {
+  Injectable,
+  Logger,
+  OnModuleInit,
+  Inject,
+  Optional,
+} from "@nestjs/common";
 import { metrics, Meter } from "@opentelemetry/api";
+import { OBSERVABILITY_OPTIONS } from "./observability.constants";
+import { ObservabilityOptions } from "./observability.interfaces";
 
 @Injectable()
 export class CustomMetricsService implements OnModuleInit {
@@ -7,9 +15,26 @@ export class CustomMetricsService implements OnModuleInit {
 
   private meter?: Meter;
   private dbQueryDurationSeconds?: any;
+  private enabled = true;
+
+  constructor(
+    @Optional()
+    @Inject(OBSERVABILITY_OPTIONS)
+    private readonly options?: ObservabilityOptions
+  ) { }
 
   onModuleInit() {
-    this.meter = metrics.getMeter("database-lib", "1.0.0");
+    this.enabled = this.options?.enabled !== false;
+
+    if (!this.enabled) {
+      this.logger.warn("Observability metrics disabled");
+      return;
+    }
+
+    const serviceName = this.options?.serviceName ?? "unknown-service";
+    const version = this.options?.serviceVersion ?? "1.0.0";
+
+    this.meter = metrics.getMeter(serviceName, version);
     this.initializeMetrics();
 
     this.logger.log("CustomMetricsService initialized");
@@ -25,8 +50,6 @@ export class CustomMetricsService implements OnModuleInit {
         unit: "s",
       }
     );
-
-    this.logger.log("Database query histogram registered");
   }
 
   recordDbQuery(
@@ -35,24 +58,12 @@ export class CustomMetricsService implements OnModuleInit {
     durationSeconds: number,
     dbName?: string
   ): void {
-    this.logger.debug(
-      `Recording DB metric | system=${dbSystem} operation=${operation} duration=${durationSeconds}s`
-    );
+    if (!this.enabled || !this.dbQueryDurationSeconds) return;
 
-    if (!this.dbQueryDurationSeconds) {
-      this.logger.warn("DB metrics histogram not initialized");
-      return;
-    }
-
-    const attributes: Record<string, string> = {
-      db_system: dbSystem,
-      db_operation: operation,
-    };
-
-    if (dbName) {
-      attributes.db_name = dbName;
-    }
-
-    this.dbQueryDurationSeconds.record(durationSeconds, attributes);
+    this.dbQueryDurationSeconds.record(durationSeconds, {
+      "db.system": dbSystem,
+      "db.operation": operation,
+      ...(dbName && { "db.name": dbName }),
+    });
   }
 }

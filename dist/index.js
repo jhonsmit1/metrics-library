@@ -16,4 +16,5 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./observability/observability.module"), exports);
 __exportStar(require("./observability/database-metrics.facade"), exports);
+__exportStar(require("./observability/observability.interfaces"), exports);
 //# sourceMappingURL=index.js.map
