@@ -5,7 +5,7 @@ import {
     Inject,
     Optional,
 } from "@nestjs/common";
-import { metrics, Meter } from "@opentelemetry/api";
+import { metrics, Meter, Counter, Histogram } from "@opentelemetry/api";
 import { OBSERVABILITY_OPTIONS } from "../observability.constants";
 import { ObservabilityOptions } from "../observability.interfaces";
 
@@ -14,13 +14,11 @@ export class CustomMetricsService implements OnModuleInit {
     private readonly logger = new Logger(CustomMetricsService.name);
 
     private meter?: Meter;
-
-    private httpRequestsTotal?: any;
-    private httpRequestDurationMs?: any;
-    private dbQueryDurationSeconds?: any;
-    private appErrorsTotal?: any;
-    private authFailedAttemptsTotal?: any;
-
+    private httpRequestsTotal?: Counter;
+    private httpRequestDurationMs?: Histogram;
+    private dbQueryDurationSeconds?: Histogram;
+    private appErrorsTotal?: Counter;
+    private authFailedAttemptsTotal?: Counter;
     private enabled = true;
 
     constructor(
