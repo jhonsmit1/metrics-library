@@ -1,4 +1,4 @@
-import { CustomMetricsService } from "./custom-metrics.service";
+import { CustomMetricsService } from "./custom-metrics.serviceAntes";
 export declare class DatabaseMetricsFacade {
     private readonly metricsService?;
     constructor(metricsService?: CustomMetricsService | undefined);

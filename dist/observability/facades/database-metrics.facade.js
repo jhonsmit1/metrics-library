@@ -14,7 +14,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DatabaseMetricsFacade = void 0;
 const common_1 = require("@nestjs/common");
-const custom_metrics_service_1 = require("./custom-metrics.service");
+const custom_metrics_service_1 = require("../services/custom-metrics.service");
 let DatabaseMetricsFacade = class DatabaseMetricsFacade {
     metricsService;
     constructor(metricsService) {
