@@ -4,17 +4,24 @@ import {
     ExecutionContext,
     CallHandler,
     UnauthorizedException,
+    Inject,
 } from "@nestjs/common";
 import { Observable, throwError } from "rxjs";
 import { catchError } from "rxjs/operators";
 import { CustomMetricsService } from "../observability/services/custom-metrics.service"
+import { OBSERVABILITY_OPTIONS } from "src/observability/observability.constants";
+import { ObservabilityOptions } from "src/observability/observability.interfaces";
 
 @Injectable()
 export class AuthMetricsInterceptor implements NestInterceptor {
-    constructor(private readonly metricsService: CustomMetricsService) { }
+    constructor(
+        private readonly metricsService: CustomMetricsService,
+        @Inject(OBSERVABILITY_OPTIONS)
+        private readonly options: ObservabilityOptions
+    ) { }
 
     intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-        if (context.getType() !== "http") {
+        if (context.getType() !== "http" || !this.options?.enableAuthMetrics) {
             return next.handle();
         }
 

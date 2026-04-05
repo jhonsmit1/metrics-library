@@ -17,37 +17,31 @@ const http_metrics_interceptor_1 = require("../interceptors/http-metrics.interce
 const error_metrics_interceptor_1 = require("../interceptors/error-metrics.interceptor");
 const auth_metrics_interceptor_1 = require("../interceptors/auth-metrics.interceptor");
 let ObservabilityModule = ObservabilityModule_1 = class ObservabilityModule {
-    static forRoot(options) {
-        const interceptors = [];
-        if (options.enableHttpMetrics) {
-            interceptors.push({
-                provide: core_1.APP_INTERCEPTOR,
-                useClass: http_metrics_interceptor_1.HttpMetricsInterceptor,
-            });
-        }
-        if (options.enableErrorMetrics) {
-            interceptors.push({
-                provide: core_1.APP_INTERCEPTOR,
-                useClass: error_metrics_interceptor_1.ErrorMetricsInterceptor,
-            });
-        }
-        if (options.enableAuthMetrics) {
-            interceptors.push({
-                provide: core_1.APP_INTERCEPTOR,
-                useClass: auth_metrics_interceptor_1.AuthMetricsInterceptor,
-            });
-        }
+    static forRootAsync(options) {
+        const providers = [
+            {
+                provide: observability_constants_1.OBSERVABILITY_OPTIONS,
+                useFactory: options.useFactory,
+                inject: options.inject || [],
+            },
+            custom_metrics_service_1.CustomMetricsService,
+            database_metrics_facade_1.DatabaseMetricsFacade,
+        ];
+        providers.push({
+            provide: core_1.APP_INTERCEPTOR,
+            useClass: http_metrics_interceptor_1.HttpMetricsInterceptor,
+        });
+        providers.push({
+            provide: core_1.APP_INTERCEPTOR,
+            useClass: error_metrics_interceptor_1.ErrorMetricsInterceptor,
+        });
+        providers.push({
+            provide: core_1.APP_INTERCEPTOR,
+            useClass: auth_metrics_interceptor_1.AuthMetricsInterceptor,
+        });
         return {
             module: ObservabilityModule_1,
-            providers: [
-                {
-                    provide: observability_constants_1.OBSERVABILITY_OPTIONS,
-                    useValue: options,
-                },
-                custom_metrics_service_1.CustomMetricsService,
-                database_metrics_facade_1.DatabaseMetricsFacade,
-                ...interceptors,
-            ],
+            providers,
             exports: [database_metrics_facade_1.DatabaseMetricsFacade],
         };
     }

@@ -8,19 +8,25 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthMetricsInterceptor = void 0;
 const common_1 = require("@nestjs/common");
 const rxjs_1 = require("rxjs");
 const operators_1 = require("rxjs/operators");
 const custom_metrics_service_1 = require("../observability/services/custom-metrics.service");
+const observability_constants_1 = require("src/observability/observability.constants");
 let AuthMetricsInterceptor = class AuthMetricsInterceptor {
     metricsService;
-    constructor(metricsService) {
+    options;
+    constructor(metricsService, options) {
         this.metricsService = metricsService;
+        this.options = options;
     }
     intercept(context, next) {
-        if (context.getType() !== "http") {
+        if (context.getType() !== "http" || !this.options?.enableAuthMetrics) {
             return next.handle();
         }
         const request = context.switchToHttp().getRequest();
@@ -38,6 +44,7 @@ let AuthMetricsInterceptor = class AuthMetricsInterceptor {
 exports.AuthMetricsInterceptor = AuthMetricsInterceptor;
 exports.AuthMetricsInterceptor = AuthMetricsInterceptor = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [custom_metrics_service_1.CustomMetricsService])
+    __param(1, (0, common_1.Inject)(observability_constants_1.OBSERVABILITY_OPTIONS)),
+    __metadata("design:paramtypes", [custom_metrics_service_1.CustomMetricsService, Object])
 ], AuthMetricsInterceptor);
 //# sourceMappingURL=auth-metrics.interceptor.js.map
