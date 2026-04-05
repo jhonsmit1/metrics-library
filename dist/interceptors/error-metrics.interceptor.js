@@ -17,7 +17,7 @@ const common_1 = require("@nestjs/common");
 const rxjs_1 = require("rxjs");
 const operators_1 = require("rxjs/operators");
 const custom_metrics_service_1 = require("../observability/services/custom-metrics.service");
-const observability_constants_1 = require("src/observability/observability.constants");
+const observability_constants_1 = require("../observability/observability.constants");
 let ErrorMetricsInterceptor = class ErrorMetricsInterceptor {
     metricsService;
     options;

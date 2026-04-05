@@ -8,8 +8,8 @@ import {
 import { Observable } from "rxjs";
 import { tap } from "rxjs/operators";
 import { CustomMetricsService } from "../observability/services/custom-metrics.service"
-import { OBSERVABILITY_OPTIONS } from "src/observability/observability.constants";
-import { ObservabilityOptions } from "src/observability/observability.interfaces";
+import { OBSERVABILITY_OPTIONS } from "../observability/observability.constants";
+import { ObservabilityOptions } from "../observability/observability.interfaces";
 
 @Injectable()
 export class HttpMetricsInterceptor implements NestInterceptor {

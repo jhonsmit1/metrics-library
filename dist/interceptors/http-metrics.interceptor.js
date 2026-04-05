@@ -16,7 +16,7 @@ exports.HttpMetricsInterceptor = void 0;
 const common_1 = require("@nestjs/common");
 const operators_1 = require("rxjs/operators");
 const custom_metrics_service_1 = require("../observability/services/custom-metrics.service");
-const observability_constants_1 = require("src/observability/observability.constants");
+const observability_constants_1 = require("../observability/observability.constants");
 let HttpMetricsInterceptor = class HttpMetricsInterceptor {
     metricsService;
     options;

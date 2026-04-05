@@ -1,7 +1,7 @@
 import { NestInterceptor, ExecutionContext, CallHandler } from "@nestjs/common";
 import { Observable } from "rxjs";
 import { CustomMetricsService } from "../observability/services/custom-metrics.service";
-import { ObservabilityOptions } from "src/observability/observability.interfaces";
+import { ObservabilityOptions } from "../observability/observability.interfaces";
 export declare class AuthMetricsInterceptor implements NestInterceptor {
     private readonly metricsService;
     private readonly options;
